@@ -5,7 +5,7 @@ My solutions for the [Weekly Python Exercise 2018](http://weeklypythonexercise.c
 ## Sample Exercises
 
 * [#01 read_n](01-sample-read_n/)
-* [#02 Sliceable dict]02-sample-sliceable_dict/)
+* [#02 Sliceable dict](02-sample-sliceable_dict/)
 
 ## Exercises
 
