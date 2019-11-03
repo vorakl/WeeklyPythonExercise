@@ -1,0 +1,150 @@
+This time, we looked at how to extend a built-in type in Python.  This is actually a somewhat controversial thing to do; whether you should really subclass from a built-in type, or whether you should write a class that then delegates to an instance of that built-in type, is a debate that I have seen for years.
+
+However, I still think that subclassing built-in types offers a chance to explore classes, the type system, and the way that methods are (and should be) invoked.
+
+Let's start with the basics of objects and inheritance, and go from there: As a general rule, we can create a class very easily.  Here's one, for example:
+    In [1]: class Foo(object):
+       ...:     def __init__(self, x):
+       ...:         self.x = x
+       ...:     def x2(self):
+       ...:         return self.x * 2
+       ...:
+   
+This class, Foo, defines two different methods:
+    __init__, a method that nearly every class includes, and whose job is to add attributes to new instances of Foo, and
+    x2, a method that returns the result of multiplying self.x by 2.
+
+If we want to create an instance of Foo and then invoke x2 on it, we can do the following:
+    In [2]: f = Foo(10)
+
+    In [3]: f.x2()
+    Out[3]: 20
+
+But now, let's ask the question: How and why does this happen?
+
+When we invoke f.x2(), Python basically asks "f" if it has an attribute named "x2".  The answer: No, it doesn't.  That's because methods are defined on classes.
+
+Python doesn't give up so quickly, though, and asks f's class, "Foo", if it has an attribute "x2".  The answer: Yes. The method call is rewritten, such that it's Foo.x2(f), we get our result, and all is good.
+
+What happens if we try to print out "f", or generally turn it into a string? Python looks for a method called __str__: Once again, it asks our object if it has an attribute named __str__. The answer is "no."  So it goes to f's class, "Foo", and asks if it has an attribute named "__str__". The answer, here too, is "no."  But once again, Python doesn't give up: It goes to Foo's parent class, known as "object", and asks whether it has a "__str__" attribute.  The answer is "yes," and we see the printed representation of our object.
+
+In other words, the order in which Python looks for attributes is:
+On the object
+On the object's class
+On the object's parent
+(Keep going up through the parents)
+object, the ultimate base class
+
+This is admittedly a bit simplified -- for example, it doesn't take into account multiple inheritance.  But it's good enough for our purposes.
+
+Thus, if we create a new class, it gets first priority when we invoke a method on an object of that type. If the attribute (method) exists on our class, then it'll be executed.  If not, then the method on our parent class will be executed.
+
+With this in mind, let's consider what we want to do here, with our SliceableDict exercise: We want to inherit from the builtin "dict" class, changing only those methods that we need for our SliceableDict to work.
+
+We can thus start with an implementation of SliceableDict as follows:
+    In [4]: class SliceableDict(dict):
+       ...:     pass
+
+Disappointed?  Fine, perhaps we need to do something more with it.  But to be honest, this version of SliceableDict does everything we want, except for one thing: If we try to retrieve a sequence of keys, then we'll still get a KeyError exception, rather than a list of values.
+
+This means that the only method we need to write in SliceableDict is __getitem__.  The __getitem__ method is central to Python, in that it's implemented on a large number of types. Every time you use square brackets on an object, that object's __getitem__ is being called.  The first parameter is "self", of course, and the second one is called "index" -- even though when it comes to dictionaries, we call the index a "key."
+
+So, what do we want to do with our __getitem__?  We basically want to do one of two things:
+If index is a key, then return the associated value
+If index is a sequence, then return all of the associated values as a list
+
+Let's start with the first part: How do we ask if a key is in a dict?  Using the "in" construct.  Which means that we can do the following:
+    In [10]: class SliceableDict(dict):
+        ...:     def __getitem__(self, index):
+        ...:         if index in self:
+        ...:             return self[index]
+    
+Now let's use it:
+    In [14]: sd = SliceableDict(a=1, b=2, c=3)
+    In [14]: sd['a']
+
+and we get... an exception, indicating that the "maximum recursion depth exceeded."
+
+Huh?  Basically, we checked to see if index was in self.  That worked just fine.  So what did we do?  We asked for self[index].  That invoked __getitem__.  Which, in turn, asked for self[index].  Which, in turn, called __getitem__.  And so forth.
+
+The solution is for us *not* to ask for self[index] from within __getitem__, because it'll lead to this sort of infinite, recursive call.  Fortunately, there is a method that we can use to retrieve from a dictionary -- dict.__getitem__!  That's right, this is one of those times when we want to explicitly call a method on a parent class.  Here's how it'll look now:
+    In [14]: class SliceableDict(dict):
+        ...:     def __getitem__(self, index):
+        ...:         if index in self:
+        ...:             return dict.__getitem__(self, index)
+
+    In [15]: sd = SliceableDict(a=1, b=2, c=3)
+
+    In [16]: sd['a']
+    Out[16]: 1
+
+Sure enough, this seems to work.
+
+What about when the key isn't in our dict, though?  What do we do then?
+
+If it's iterable, then we'll try to iterate over each element, and pull out the value associated with it.  We could, of course, create an output list and append to it.  But as always, if we have an iterable and want to create a list based on it, we can use a list comprehension.  In other words, we can do the following:
+    In [21]: class SliceableDict(dict):
+        ...:     def __getitem__(self, index):
+        ...:         if index in self:
+        ...:             return dict.__getitem__(self, index)
+        ...:         else:
+        ...:             return [dict.__getitem__(self, one_key)
+        ...:                     for one_key in index]
+        ...:
+        ...:
+
+    In [22]: sd = SliceableDict(a=1, b=2, c=3)
+
+    In [23]: sd['a']
+    Out[23]: 1
+
+    In [24]: sd['ab']
+    Out[24]: [1, 2]
+
+    In [25]: sd['abc']
+    Out[25]: [1, 2, 3]
+
+So far, it's looking pretty good: If we pass our SliceableDict a key that's in the dictionary, we get the value back.  If we pass our SliceableDict a sequence of keys, we get a list of values back.  That's great!
+
+The only problem is: What if we pass a key that is neither in the dict nor iterable?  For example:
+    In [26]: sd[123]
+    ---------------------------------------------------------------------------
+    TypeError                                 Traceback (most recent call last)
+    <ipython-input-26-ad91360de55d> in <module>()
+    ----> 1 sd[123]
+
+    <ipython-input-21-92fec766c278> in __getitem__(self, index)
+          5         else:
+          6             return [dict.__getitem__(self, one_key)
+    ----> 7                     for one_key in index]
+          8
+          9
+
+    TypeError: 'int' object is not iterable
+
+We'll get an error, but a very weird one -- after all, when a key doesn't exist in a dictionary, we want to raise a KeyError, not an error message about an iterable.
+
+One solution is to trap for exceptions here. We can try to run our list comprehension over "item".  If we get an error, then we can raise a KeyError exception, which is what people would expect for a bad key.  Here's how that could look:
+    class SliceableDict(dict):
+        def __getitem__(self, index):
+            if index in self:
+                return dict.__getitem__(self, index)
+            else:
+                try:
+                    return [dict.__getitem__(self, item)
+                            for item in index]
+                except TypeError as e:
+                    raise KeyError("No such key {}".format(index)) 
+
+We now get the functionality we want:
+If the key exists, we get the value
+If "index" is iterable, then we return a list of values, one value for each element in "index"
+If "index" doesn't exist in our dictionary, then we raise KeyError
+If one element of an iterable "index" doesn't exist, we raise KeyError
+The above implementation does this, pulling together the ideas of inheritance (from dict), comprehensions (in __getitem__), and even a bit with exceptions.
+
+This was an admittedly tough exercise, especially if you're new to Python or objects.  I'll keep having some more advanced ones like these, but next time, we'll be looking into turning JSON into CSV. It should be easier than this.
+
+Until next time,
+
+Reuven

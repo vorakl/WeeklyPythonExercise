@@ -1,0 +1,105 @@
+On Tuesday, I asked you to write a generator function that takes two parameters -- the name of a file from which we want to read, and then the number of lines we want to get with each iteration.  For example, if we were to invoke it as follows:
+    for four_lines in read_n(filename, 4):
+        print(two_lines.rstrip())
+
+Each iteration will then give us up to n lines (where "n" is the second parameter) from the file.
+
+So, how can we do this?  Well, let's consider how we would do it for one line at a time -- an admittedly silly thing to do, given that a file object is already a line-by-line iterator, but this way we can build up from there:
+    #!/usr/bin/env python
+
+    def read_1(filename):
+        f = open(filename)
+
+        while True:
+            first_line = f.readline()
+
+            if not first_line:
+                break
+
+            yield first_line
+
+When invoked, the above function returns a generator -- that is, an object that implements Python's interation protocol. The difference between a regular function and a generator function is the "yield" keyword that we see above. In a regular function, "return" tells the function that it should end, and that it should return a value to the caller.
+
+In the case of a generator function, "yield" tells the function to return a value, but not to end!  Instead, the function goes to sleep, waiting until it is asked for the next value.
+
+When a generator function reaches the end (or when it returns without a value), the generator effectively ends, telling its caller that there are no more iterations to be had.
+
+With each iteration, a generator function executes up to and including the next "yield" statement.  So in the above code, when we first run read_1, we get a generator back.  When we invoke "next" for the first time on that generator, the code runs -- opening the file, starting the infinite "while" loop, and reading first_line.
+
+Once we have read into first_line (in the first iteration), each successive iteration falls into one of two categories: Either we have a blank line (in which case we've reached the end of the file, and exit both the loop and the generator) or a non-blank line (in which case we return it and go back to sleep with "yield").
+
+If we haven't exited, then the next iteration will run up to and including the following "yield" statement, starting with another call to f.readline(), another check to see if it's blank, and another "yield" of the current value.
+
+read_1 gives one one line at a time.  What if we want to read two lines at a time?  Well, then we'll need a totally different function, named (strangely enough) read_2.  It would look like this:
+    def read_2(filename):
+        f = open(filename)
+
+        while True:
+            first_line = f.readline()
+
+            if not first_line:
+                break
+
+            yield first_line + f.readline()
+
+If you're thinking, "Hey, that's just like read_1, except that it yields "first_line + f.readline()", rather than yielding just first_line.  That's because f.readline() will either return the next line (if there is one) or an empty string (if there is not).  Either way, it doesn't hurt to add f.readline() to first_line.
+
+Note that I don't check to see if the empty string is == to '', or if its length is zero.  The "pythonic" way to check for an empty string, or actually an empty sequence, is to just check its truth value in a boolean context.
+
+How can we generalize this to a any number of lines?  Well, we'll need to take a second parameter, which is the number of lines we want to get back.  In each case, the break-or-no-break decision is made based on the value of "first_line".  If it's empty, then we break.  If it's not empty, then let's just read n-1 lines from the file.  In the worst-case scenario, we'll just keep trying to read from the file, getting empty strings instead.
+
+How can I read n-1 lines from the file?  I could use a "for" loop, and add to a string.  A bit more elegant, especially if we're reading many lines, would be to have the "for" loop create a list, appending to it with each iteration.  But my go-to solution in such a case will almost always be a list comprehension.  That's because I'm trying to turn a sequence of strings (i.e., lines from the file) into a list of strings, on which I can then run "str.join" and get a string back.
+
+Here's a solution, then:
+    def read_n(filename, n):
+        f = open(filename)
+
+        while True:
+            first_line = f.readline()
+
+            if not first_line:
+                break
+
+            yield first_line + ''.join(f.readline()
+                                       for i in range(n-1))
+
+If you look carefully, you'll see that I'm not actually passing a list comprehension (and thus a list) to str.join.  Rather, I'm passing a generator expression -- basically, a list comprehension without [ ], which returns a generator (yes, another one) rather than a list.
+
+However, I would argue that we don't need a special case for the first line.  We can just read n lines at a time, join them together into a string, and then exit if we have an empty string:
+    def read_n(filename, n):
+        f = open(filename)
+
+        while True:
+            output = ''.join(f.readline()
+                                       for i in range(n))
+            if output:
+                yield output
+            else:
+                break
+
+With this in place, I can now read five lines at a time with:
+    for five_lines in read_n(filename, 5):
+        print(five_lines)
+
+The final code is:
+#!/usr/bin/env python
+
+def read_n(filename, n):
+    f = open(filename)
+
+    while True:
+        output = ''.join(f.readline()
+                                   for i in range(n))
+        if output:
+            yield output
+        else:
+            break
+
+for index, chunk in enumerate(read_n('solution.py', 3)):
+    print("{0} '{1}'".format(index, chunk))
+
+I'll be back tomorrow with another exercise.
+
+Until then,
+
+Reuven
