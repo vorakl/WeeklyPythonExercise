@@ -10,3 +10,4 @@ My solutions for the [Weekly Python Exercise 2018](http://weeklypythonexercise.c
 ## Exercises
 
 * [#01 Travel](01-travel/)
+* [#02 MyRange](02-myrange/)
