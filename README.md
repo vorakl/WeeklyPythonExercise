@@ -11,3 +11,4 @@ My solutions for the [Weekly Python Exercise 2018](http://weeklypythonexercise.c
 
 * [#01 Travel](01-travel/)
 * [#02 MyRange](02-myrange/)
+* [#03 LogToList](03-logtolist/)
