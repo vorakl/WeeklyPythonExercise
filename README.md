@@ -1,6 +1,6 @@
 # Weekly Python Exercise
 
-My solutions for the [Weekly Python Exercise 2018](http://weeklypythonexercise.com/) by Reuven M. Lerner. 
+My solutions for the [Weekly Python Exercise 2018](https://store.lerner.co.il/wpe) by Reuven M. Lerner. 
 
 ## Free Samples
 
