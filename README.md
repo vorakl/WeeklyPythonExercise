@@ -12,3 +12,4 @@ My solutions for the [Weekly Python Exercise 2018](https://store.lerner.co.il/wp
 * [#01 Travel](01-travel/)
 * [#02 MyRange](02-myrange/)
 * [#03 LogToList](03-logtolist/)
+* [#04 LogToListClass](04-logtolistclass/)
