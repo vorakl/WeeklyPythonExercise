@@ -14,3 +14,4 @@ My solutions for the [Weekly Python Exercise 2018](https://store.lerner.co.il/wp
 * [#03 LogToList](03-logtolist/)
 * [#04 LogToListClass](04-logtolistclass/)
 * [#05 Big cities](05-big-cities/)
+* [#06 Hobby counter](06-hobby_counter/)
