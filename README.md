@@ -11,8 +11,8 @@ My solutions for the [Weekly Python Exercise 2018](https://store.lerner.co.il/wp
 
 * [#01 Travel](01-travel/)
 * [#02 MyRange](02-myrange/)
-* [#03 LogToList](03-logtolist/)
-* [#04 LogToListClass](04-logtolistclass/)
-* [#05 Big cities](05-big-cities/)
-* [#06 Hobby counter](06-hobby_counter/)
-* [#07 Wedding guests](07-wedding_guests/)
+* [#03 LogToList](03-log_to_list/)
+* [#04 LogToListClass](04-log_to_list_class/)
+* [#05 Big Cities](05-big_cities/)
+* [#06 Hobby Counter](06-hobby_counter/)
+* [#07 Wedding Guests](07-wedding_guests/)
