@@ -16,4 +16,5 @@ My solutions for the [Weekly Python Exercise 2018](https://store.lerner.co.il/wp
 * [#05 Big Cities](05-big_cities/)
 * [#06 Hobby Counter](06-hobby_counter/)
 * [#07 Wedding Guests](07-wedding_guests/)
-* [#08 Apply to file](08-apply_to_file/)
+* [#08 Apply to File](08-apply_to_file/)
+* [#09 Math Practice](09-math_practice/)
