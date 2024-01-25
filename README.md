@@ -19,3 +19,4 @@ My solutions for the [Weekly Python Exercise 2018](https://store.lerner.co.il/wp
 * [#08 Apply to File](08-apply_to_file/)
 * [#09 Math Practice](09-math_practice/)
 * [#10 Multiziperator](10-multiziperator/)
+* [#11 Tee](11-tee/)
