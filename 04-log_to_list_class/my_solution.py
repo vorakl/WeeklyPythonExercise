@@ -58,7 +58,7 @@ class LogDicts():
             return loc_logs
 
 def main():
-    ld = LogDicts('mini-access-log.txt')
+    ld = LogDicts('mini_access_log.txt')
     pp(list(ld.dicts(key=lambda x: x['request'].split()[1])))
     print()
     print(ld.earliest())

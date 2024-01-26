@@ -27,7 +27,7 @@ def parse_logfile(fname):
     return res
 
 def main():
-    fname = 'mini-access-log.txt'
+    fname = 'mini_access_log.txt'
     flogs = parse_logfile(fname)
     pp(flogs)
     print(f"Total records: {len(flogs)}")
