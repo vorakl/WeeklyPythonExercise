@@ -21,3 +21,4 @@ My solutions for the [Weekly Python Exercise 2018](https://store.lerner.co.il/wp
 * [#10 Multiziperator](10-multiziperator/)
 * [#11 Tee](11-tee/)
 * [#12 DirFileHash](12-dirfilehash/)
+* [#13 Virtual Property](13-virtual_property/)
