@@ -24,3 +24,4 @@ My solutions for the [Weekly Python Exercise 2018](https://store.lerner.co.il/wp
 * [#13 Virtual Property](13-virtual_property/)
 * [#14 Checkpickle](14-checkpickle/)
 * [#15 All word count](15-all_word_count/)
+* [#16 Threshold Equal](16-threshold_equal/)
