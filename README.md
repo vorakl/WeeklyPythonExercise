@@ -27,3 +27,4 @@ My solutions for the [Weekly Python Exercise 2018](https://store.lerner.co.il/wp
 * [#16 Threshold Equal](16-threshold_equal/)
 * [#17 Magic tuples](17-magic_tuples/)
 * [#18 Formatted cart](18-formatted_cart/)
+* [#19 Password checker](19-password_checker/)
