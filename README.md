@@ -29,3 +29,4 @@ My solutions for the [Weekly Python Exercise 2018](https://store.lerner.co.il/wp
 * [#18 Formatted cart](18-formatted_cart/)
 * [#19 Password checker](19-password_checker/)
 * [#20 Headtail](20-headtail/)
+* [#21 Itemgetter](21-itemgetter/)
