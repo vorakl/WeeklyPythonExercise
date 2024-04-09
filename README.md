@@ -31,3 +31,4 @@ My solutions for the [Weekly Python Exercise 2018](https://store.lerner.co.il/wp
 * [#20 Headtail](20-headtail/)
 * [#21 Itemgetter](21-itemgetter/)
 * [#22 Once per minute](22-once_per_minute/)
+* [#23 str_range](23-str_range/)
